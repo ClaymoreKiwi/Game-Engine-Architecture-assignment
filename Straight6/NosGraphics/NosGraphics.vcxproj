@@ -71,13 +71,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)extern\assimp\include;..\extern\glew-2\include\GL;..\extern\SDL2\include;..\extern\SDL2_ttf\include;$(SolutionDir)extern\SDL2_image\include;$(SolutionDir)extern\glm-master;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)extern\assimp\lib\x64;..\extern\SDL2\lib\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\SDL2_ttf\lib\x64;..\extern\glew-2\lib\Release\x64;..\intern\GameSubSystems;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)extern\assimp\include;..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\SDL2_image\include;$(SolutionDir)extern\glm-master;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)extern\assimp\lib\x64;..\extern\SDL2\lib\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\glew-2\lib\Release\x64;..\intern\GameSubSystems;$(LibraryPath)</LibraryPath>
     <OutDir>..\intern\NosGraphics\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)extern\assimp\include;..\extern\glew-2\include\GL;..\extern\SDL2\include;..\extern\SDL2_ttf\include;$(SolutionDir)extern\SDL2_image\include;$(SolutionDir)extern\glm-master;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)extern\assimp\lib\x64;..\extern\SDL2\lib\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\SDL2_ttf\lib\x64;..\extern\glew-2\lib\Release\x64;..\intern\GameSubSystems;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)extern\assimp\include;..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\SDL2_image\include;$(SolutionDir)extern\glm-master;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)extern\assimp\lib\x64;..\extern\SDL2\lib\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\glew-2\lib\Release\x64;..\intern\GameSubSystems;$(LibraryPath)</LibraryPath>
     <OutDir>..\intern\NosGraphics\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -129,7 +129,7 @@
     </ProjectReference>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)intern\GameSubSystems;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc142-mtd.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,14 +157,13 @@
     </ProjectReference>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)intern\GameSubSystems;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc142-mtd.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="BillboardRenderer.cpp" />
     <ClCompile Include="CubeRenderer.cpp" />
-    <ClCompile Include="FontRendering.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="ShaderUtils.cpp" />
@@ -178,7 +177,6 @@
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="BillboardRenderer.h" />
     <ClInclude Include="CubeRenderer.h" />
-    <ClInclude Include="FontRendering.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="ShaderUtils.h" />

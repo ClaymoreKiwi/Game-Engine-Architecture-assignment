@@ -57,9 +57,6 @@ namespace GC {
 		}
 		else std::cout << "VSync Disabled\n";
 
-		//variable setup
-		fontRenderer = new GE::FontRendering(app_Window, width, height);
-
 		mr = new GE::ModelRenderer();
 		//skyboxRenderer = new GE::SkyBox(skySides);
 
@@ -75,16 +72,16 @@ namespace GC {
 									glm::vec3(0.0f, 1.0f, 0.0f),//Up direction
 									45.0f, 640.0f / 480.0f, .1f, 1000.0f);
 
-		billboard = new GE::Billboard("../models/tree.png");
+		bb = new GE::Billboard("../models/tree.png");
 
-		billboard->setScaleX(10.0f);
-		billboard->setScaleY(10.0f);
+		bb->setScaleX(10.0f);
+		bb->setScaleY(10.0f);
 
-		billboard->setZ(-10.0f);
+		bb->setZ(-10.0f);
 
-		billboardRenderer = new GE::BillboardRenderer();
+		bbr = new GE::BillboardRenderer();
 
-		billboardRenderer->init();
+		bbr->init();
 
 		LoadModels();
 		mr->setPos(260.0f, 0.0f, 300.0f);
@@ -182,8 +179,6 @@ namespace GC {
 		////////////////////////////
 
 		processInput();
-		int colour[4] ={255,255,255,255};
-		fontRenderer->draw("FPS: ", 100, 50, 150, 50, colour);
 		mr->setRotation(0.0f, -180.0f, 0.0f);
 	}
 
@@ -199,7 +194,7 @@ namespace GC {
 		{
 			mr->Draw(fpscam, model);
 		}
-		billboardRenderer->draw(billboard, fpscam);
+		bbr->draw(bb, fpscam);
 		SDL_GL_SwapWindow(app_Window);
 	}
 

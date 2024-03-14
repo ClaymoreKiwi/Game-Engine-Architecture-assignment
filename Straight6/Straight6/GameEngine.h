@@ -11,7 +11,6 @@
 #include "Terrain.h"
 #include "Billboard.h"
 #include "BillboardRenderer.h"
-#include "FontRendering.h"
 
 namespace GC
 {
@@ -52,10 +51,8 @@ namespace GC
 		GE::SkyDome*			skydome = nullptr;
 		GE::ModelRenderer*		skyMr = nullptr;
 
-		GE::Billboard* billboard = nullptr;
-		GE::BillboardRenderer* billboardRenderer = nullptr;
-
-		GE::FontRendering* fontRenderer = nullptr;
+		GE::Billboard* bb = nullptr;
+		GE::BillboardRenderer* bbr = nullptr;
 
 		short int FPSCounter = 0;
 		static const int size = 5;

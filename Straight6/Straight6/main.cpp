@@ -21,8 +21,3 @@ int main(int argc, char* argv[])
 	ge = nullptr;
 	return 0;
 }
-//////////////////////////
-//////////////////////////
-//THIS BRANCH IS FOR TESTING - IF YOU ARE SEEING THIS ON MAIN DELETE THIS COMMENT
-//////////////////////////
-//////////////////////////
