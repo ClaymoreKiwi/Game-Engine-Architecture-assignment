@@ -27,7 +27,7 @@ namespace GE
 		}
 	private:
 		GLuint vbo = 0;
-		GE::Texture* texture = nullptr;
+		std::unique_ptr<GE::Texture> texture = nullptr;
 		const GLuint* PIDref = nullptr;
 		int numVertices = 0;
 	};

@@ -5,7 +5,7 @@ namespace GC {
 
 	bool GC::GameEngine::Init(bool enableVsync)
 	{
-		time = new deltaTime();
+		time = std::make_unique<deltaTime>();
 		//initialising SDL
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
@@ -16,12 +16,10 @@ namespace GC {
 		//set OpenGL version
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		//set the profile to core - modern OpenGL
-		//no legacy features for backwards compatibility
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		//create window - fixed window size
-		app_Window = SDL_CreateWindow("Straight6", 50, 50, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		app_Window.reset(SDL_CreateWindow("Straight6", 50, 50, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN));
 		if (app_Window == nullptr)
 		{
 			std::cerr << "unable to create window! Error: " << SDL_GetError() << std::endl;
@@ -29,7 +27,7 @@ namespace GC {
 		}
 
 		//Create Gl Context using SDL
-		app_GlContext = SDL_GL_CreateContext(app_Window);
+		app_GlContext = SDL_GL_CreateContext(app_Window.get());
 		if (app_GlContext == nullptr)
 		{
 			std::cerr << "SDL could not create GL context! Error: " << SDL_GetError() << std::endl;
@@ -57,34 +55,32 @@ namespace GC {
 		}
 		else std::cout << "VSync Disabled\n";
 
-		mr = new GE::ModelRenderer();
-		//skyboxRenderer = new GE::SkyBox(skySides);
+		//variable setup
+		fontRenderer = new GE::FontRendering();
+		fontRenderer->BindTexture("hello world", "../models/fonts/Oswald-Regular.ttf", 24);
 
-		skydome = new GE::SkyDome("../models/SkyDome/skydomeDark.jpg", 16, 10);
-		skyMr = new GE::ModelRenderer();
+		mr = std::make_unique<GE::ModelRenderer>();
 
-		terrain = new GE::Terrain("../models/terrain/island-texture.png","../models/terrain/island-map.png", 20.0f, 500.0f);
-		terrainMr = new GE::ModelRenderer();
+		skydome = std::make_unique<GE::SkyDome>("../models/SkyDome/skydomeDark.jpg", 16, 10);
+		skyMr =   std::make_unique<GE::ModelRenderer>();
+
+		terrain =   std::make_unique<GE::Terrain>("../models/terrain/island-texture.png","../models/terrain/island-map.png", 20.0f, 500.0f);
+		terrainMr = std::make_unique<GE::ModelRenderer>();
 
 		//init cam
-		fpscam = new GE::FPSCamera(glm::vec3(0.0f, 0.0f, 0.0f) + dist,//look at
+		fpscam = std::make_unique<GE::FPSCamera>(glm::vec3(0.0f, 0.0f, 0.0f) + dist,//look at
 									glm::vec3(250.0f, 50.0f, 500.0f),//pos
 									glm::vec3(0.0f, 1.0f, 0.0f),//Up direction
 									45.0f, 640.0f / 480.0f, .1f, 1000.0f);
 
-		bb = new GE::Billboard("../models/tree.png");
+		billboard = std::make_unique<GE::Billboard>("../models/tree.png", 250, 0, 250);
 
-		bb->setScaleX(10.0f);
-		bb->setScaleY(10.0f);
+		billboard->setScaleX(10.0f);
+		billboard->setScaleY(10.0f);
 
-		bb->setZ(-10.0f);
-
-		bbr = new GE::BillboardRenderer();
-
-		bbr->init();
+		billboardRenderer = std::make_unique<GE::BillboardRenderer>();
 
 		LoadModels();
-		mr->setPos(260.0f, 0.0f, 300.0f);
 		//success - return true
 		return true;
 	}
@@ -93,8 +89,14 @@ namespace GC {
 	{
 		for (int i = 0; i < size; i++)
 		{
-			modelsToLoad.push_back(new GE::Model(mr->getPID(), listOfModels[i], listOfTextures[i]));
+			if (listOfModels[i] != "../models/Trees.obj")
+			{
+				modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i], listOfTextures[i]));
+				continue;
+			}
+			modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i], listOfTextures[i]));
 		}
+		mr->setPos(260.0f, 0.0f, 300.0f);
 	}
 
 	bool GameEngine::KeepRunning()
@@ -125,7 +127,7 @@ namespace GC {
 		fpscam->setYaw(fpscam->getYaw() + diffX * mouseSens);
 		fpscam->setPitch(fpscam->getPitch() + diffY * mouseSens);
 
-		SDL_WarpMouseInWindow(app_Window, width / 2, height / 2);
+		SDL_WarpMouseInWindow(app_Window.get(), width / 2, height / 2);
 
 		glm::vec3 direction;
 		direction.x = cos(glm::radians(fpscam->getYaw())) * cos(glm::radians(fpscam->getPitch()));
@@ -186,39 +188,24 @@ namespace GC {
 	{
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//skyboxRenderer->Draw(camera);
-		skyMr->Draw(fpscam, skydome);
-		terrainMr->Draw(fpscam, terrain);
+		skyMr->Draw(fpscam.get(), skydome.get());
+		terrainMr->Draw(fpscam.get(), terrain.get());
 		for (auto& model : modelsToLoad)
 		{
-			mr->Draw(fpscam, model);
+			mr->Draw(fpscam.get(), model.get());
 		}
-		bbr->draw(bb, fpscam);
-		SDL_GL_SwapWindow(app_Window);
+		for (auto& model : modelsToInstance)
+		{
+			mr->Draw(fpscam.get(), model.get());
+		}
+		billboardRenderer->draw(billboard.get(), fpscam.get());
+		fontRenderer->RenderText();
+		SDL_GL_SwapWindow(app_Window.get());
 	}
 
 	void GameEngine::ShutDown()
 	{
-		delete mr;
-		mr = nullptr;
-		delete terrain;
-		terrain = nullptr;
-		delete terrainMr;
-		terrainMr = nullptr;
-
-		for (auto& model : modelsToLoad)
-		{
-			delete model;
-			model = nullptr;
-		}
 		modelsToLoad.clear();
-		delete fpscam;
-
-		SDL_DestroyWindow(app_Window);
-
-		app_Window = nullptr;
-
 		SDL_Quit();
 	}
 
@@ -229,7 +216,7 @@ namespace GC {
 			std::ostringstream msg;
 			msg << "FPS = " << FPSCounter;
 			FPSCounter = 0;
-			SDL_SetWindowTitle(app_Window, msg.str().c_str());
+			SDL_SetWindowTitle(app_Window.get(), msg.str().c_str());
 			time->ManualReset();
 		}
 	}

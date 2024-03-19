@@ -7,7 +7,10 @@ namespace GE {
 	class BillboardRenderer
 	{
 	public:
-		BillboardRenderer() {};
+		BillboardRenderer() 
+		{
+			init();
+		};
 
 		~BillboardRenderer() {
 			glDeleteBuffers(1, &vboQuad);
@@ -15,8 +18,8 @@ namespace GE {
 
 		void init();
 
+		void draw(Billboard* b);
 		void draw(Billboard*, Camera*);
-
 		void setPos(float x, float y, float z)
 		{
 			posX = x;

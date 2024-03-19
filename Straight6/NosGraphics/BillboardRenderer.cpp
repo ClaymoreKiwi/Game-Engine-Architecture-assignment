@@ -51,19 +51,39 @@ namespace GE {
 		samplerId			= glGetUniformLocation(programId, "sampler");
 
 		// Create the vertex buffer for the quad
-		glGenBuffers(1, &vboQuad);
-		glBindBuffer(GL_ARRAY_BUFFER, vboQuad);
+		GLCall(glGenBuffers(1, &vboQuad));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vboQuad));
 
 		// Transfer vertices to graphics memory
-		glBufferData(GL_ARRAY_BUFFER, sizeof(billboard), billboard, GL_STATIC_DRAW);
-		// Lot of duplication going on here, so think about how you could reduce this
-		// duplication.  Don't forget, billboard is a quad so doesn't need a model to
-		// be loaded from a file
+		GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(billboard), billboard, GL_STATIC_DRAW));
+	}
+
+	void BillboardRenderer::draw(Billboard* b)
+	{
+		glEnable(GL_BLEND);
+		//removes backgound colour from alpha channel
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glm::mat4 transformationMat = glm::mat4(1.0f);
+		glm::mat4 viewMat = glm::mat4(1.0f);
+		glm::mat4 projectionMat = glm::ortho(0.0f, 640.0f, 480.0f, 0.0f);
+		// Select the program into the rendering context
+		GLCall(glUseProgram(programId));
+
+		// Set the uniforms in the shader
+		GLCall(glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, glm::value_ptr(transformationMat)));
+		GLCall(glUniformMatrix4fv(viewUniformId, 1, GL_FALSE, glm::value_ptr(viewMat)));
+		GLCall(glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat)));
+
+		b->BindTexture(&programId);
+		SetupMatricies(vboQuad, vertexLocation, vertexUVLocation, 6);
+
+		glDisable(GL_BLEND);
 	}
 
 	void BillboardRenderer::draw(Billboard* b, Camera* cam)
 	{
 		glEnable(GL_BLEND);
+		//removes backgound colour from alpha channel
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Calculate the transformation matrix for the object.  Start with the identity matrix
@@ -83,40 +103,15 @@ namespace GE {
 		glm::mat4 projectionMat = cam->getProjectionMatrix();
 
 		// Select the program into the rendering context
-		glUseProgram(programId);
+		GLCall(glUseProgram(programId));
 
 		// Set the uniforms in the shader
-		glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, glm::value_ptr(transformationMat));
-		glUniformMatrix4fv(viewUniformId, 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat));
+		GLCall(glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, glm::value_ptr(transformationMat)));
+		GLCall(glUniformMatrix4fv(viewUniformId, 1, GL_FALSE, glm::value_ptr(viewMat)));
+		GLCall(glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat)));
 
-		// Enable the attribute to be passed vertices from the vertex buffer object
-		glEnableVertexAttribArray(vertexLocation);
-		// Select the vertex buffer object into the context
-		glBindBuffer(GL_ARRAY_BUFFER, vboQuad);
-
-		// Define the structure of a vertex for OpenGL to select values from vertex buffer
-		// and store in vertexPos2DLocation attribute
-		glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
-
-		// Enable the attribute to be passed vertices from the vertex buffer object
-		glEnableVertexAttribArray(vertexUVLocation);
-		// Define where the vertex specification will find the colour data and how much
-		// Colour data is four float values, located at where the r member is.  Stride is a vertex apart
-		glVertexAttribPointer(vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
-
-		glActiveTexture(GL_TEXTURE0);
 		b->BindTexture(&programId);
-
-		// Draw the model
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Unselect the attribute from the context
-		glDisableVertexAttribArray(vertexLocation);
-		glDisableVertexAttribArray(vertexUVLocation);
-
-		// Unselect the program from the context
-		glUseProgram(0);
+		SetupMatricies(vboQuad,vertexLocation,vertexUVLocation, 6);
 
 		glDisable(GL_BLEND);
 	}

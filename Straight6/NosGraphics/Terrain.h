@@ -2,7 +2,7 @@
 #include <glew.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
-
+#include <memory>
 #include "Texture.h"
 
 namespace GE
@@ -13,26 +13,23 @@ namespace GE
 
 		Terrain(const char* texturePath, const char* heightMapPath, float HightScale, float Scale);
 		void BindTexture(const GLuint* PIDref);
-		~Terrain()
-		{
-			delete texture;
-		}
-		inline GLuint getVertices()
+		~Terrain(){}
+		const inline GLuint getVertices()
 		{
 			return vbo;
 		}
 		
-		inline GLuint getIndices()
+		const inline GLuint getIndices()
 		{
 			return ibo;
 		}
-		GLuint getIndexCount()
+		const inline GLuint getIndexCount()
 		{
 			return indexCount;
 		}
 	private:
 		GLuint vbo, ibo, indexCount;
-		GE::Texture* texture = nullptr;
+		std::unique_ptr<GE::Texture> texture = nullptr;
 	};
 }
 

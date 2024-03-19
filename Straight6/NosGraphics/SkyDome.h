@@ -2,6 +2,7 @@
 #include <glew.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <memory>
 #include "Texture.h"
 namespace GE
 {
@@ -23,15 +24,11 @@ namespace GE
 		{
 			return indexCount;
 		}
-		~SkyDome()
-		{
-			delete texture;
-			texture = nullptr;
-		}
+		~SkyDome(){}
 
 	public:
 		GLuint vbo, ibo, indexCount;
-		Texture* texture = nullptr;
+		std::unique_ptr<Texture> texture = nullptr;
 	};
 }
 

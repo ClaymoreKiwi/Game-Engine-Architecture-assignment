@@ -7,6 +7,36 @@
 #include <sstream>
 #include <memory>
 
+//error handling debug break for compiler speecific usage
+#ifdef _MSC_VER // Microsoft Visual Studio compiler
+#define DEBUGBREAK __debugbreak();
+#elif defined(__GNUC__) // GCC, Clang
+#define DEBUGBREAK __builtin_trap();
+#else
+#error "Unknown compiler! Implement debug break for this compiler."
+#endif
+
+//https://www.youtube.com/watch?v=FBbPWSOQ0-w&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2&index=10
+//error handling for 
+#define ASSERT(x) if (!(x)) DEBUGBREAK
+#define GLCall(x) GLClearError();\
+	x;\
+	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+static void GLClearError()
+{
+	while (glGetError() != GL_NO_ERROR);
+}
+static bool GLLogCall(const char* function, const char* file, int line)
+{
+	while (GLenum error = GL_NO_ERROR)
+	{
+		std::cerr << "[OpenGL Error] (" << error << ")" << function <<
+			" " << file << ":" << line << std::endl;
+		return false;
+	}
+	return true;
+}
+
 //this function is a helper function that allows us to see
 //errors when the shaders do not compile ok.
 inline void DisplayShaderCompilerError(GLuint shaderId)

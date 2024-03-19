@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <memory>
 #include "Texture.h"
 #include "ShaderUtils.h"
 
@@ -9,10 +10,15 @@ namespace GE
 	class Billboard
 	{
 	public:
-		Billboard(const char* texturePath)
-			:x(0.0), y(0.0), z(0.0)
+		Billboard(const char* texturePath, float PosX, float PosY, float PosZ)
+			:x(PosX), y(PosY), z(PosZ)
 		{
-			texture = new Texture(texturePath);
+			texture = std::make_unique<Texture>(texturePath);
+			scaleX = scaleY = ScaleZ = 1.0f;
+		}
+		Billboard(Texture* texture)
+			:texture(texture)
+		{
 			scaleX = scaleY = ScaleZ = 1.0f;
 		}
 		void BindTexture(const GLuint* PID);
@@ -68,7 +74,7 @@ namespace GE
 		float x = 0, y = 0, z = 0;
 		float scaleX = 0, scaleY = 0, ScaleZ = 0;
 
-		Texture* texture = nullptr;
+		std::unique_ptr<Texture> texture = nullptr;
 		glm::vec3 pos = { x,y,z };
 	};
 }

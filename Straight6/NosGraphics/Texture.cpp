@@ -27,15 +27,15 @@ void GE::Texture::loadTexture(std::string fileName)
 		break;
 	}
 	//create texture name from the assigned texture
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &textureName);
-	glBindTexture(GL_TEXTURE_2D, textureName);
+	GLCall(glActiveTexture(GL_TEXTURE0));
+	GLCall(glGenTextures(1, &textureName));
+	GLCall(glBindTexture(GL_TEXTURE_2D, textureName));
 	//subsequent texture setup for openGL
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, surfaceImage->pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, surfaceImage->pixels));
+	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	//configure the weighting and what to manuipulate when texture is mapped on a model
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	//release surface
 	SDL_FreeSurface(surfaceImage);
 

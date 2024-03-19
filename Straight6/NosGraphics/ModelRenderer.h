@@ -26,6 +26,9 @@ namespace GE
 		void Init();								   //create shaders and vertex buffer
 		void Update();
 		void ManipulateVerticies(glm::mat4& tranformationMat);
+		void DrawWithIndecies(GLuint vertex, GLuint index, GLuint indexNumber);
+		void DrawInstanced();
+		void Fog(float density);
 		//update the state of the object e.g Anims
 		void Draw(Camera* cam, Model* model);		   //Rendering method
 		void Draw(Camera* cam, Terrain* terrain);
@@ -99,6 +102,7 @@ namespace GE
 	private:
 		GLuint programID = 0;			 // program object that contains the shaders
 		GLuint vboTriangle = 0;			 //store triange vertex buffer containing vertices - transfered to graphics memory
+		GLuint vboInstanced = 0;
 
 		GLint vertexPos3DLocation = 0;   //3D attributes for the pipeline
 		GLint vertexUVLocation = 0;      //recieves a UV coordiante
@@ -122,11 +126,11 @@ namespace GE
 			   projectionUniformID = 0,
 			   samplerID = 0;
 
+		GLuint fogColourID = 0,
+			   fogDensityID = 0;
+
 		std::string mr_vShader;
 		std::string mr_fShader;
-
-		Texture* texture = nullptr;
-
 	};
 }
 

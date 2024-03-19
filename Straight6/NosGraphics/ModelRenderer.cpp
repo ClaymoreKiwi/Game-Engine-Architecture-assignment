@@ -34,15 +34,15 @@ namespace GE {
 		viewUniformID		= glGetUniformLocation(programID, "viewMat");
 		projectionUniformID = glGetUniformLocation(programID, "projMat");
 		transformUniformID  = glGetUniformLocation(programID, "transformMat");
-
+		
 		//tidy up the buffer other setting up
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
 	void ModelRenderer::Update()
 	{
 	}
-
+	//round and round 
 	void ModelRenderer::ManipulateVerticies(glm::mat4& tranformationMat)
 	{
 		using namespace glm;
@@ -51,6 +51,50 @@ namespace GE {
 		tranformationMat = rotate(tranformationMat, radians(RotY), vec3(0.0f, 0.5f, 0.0f));
 		tranformationMat = rotate(tranformationMat, radians(RotZ), vec3(0.0f, 0.0f, 0.5f));
 		tranformationMat = scale(tranformationMat, vec3(ScaleX, ScaleY, ScaleZ));
+	}
+
+	void ModelRenderer::DrawWithIndecies(GLuint vertex, GLuint index, GLuint indexNumber)
+	{
+		//select the vertex buffer into context
+		glBindBuffer(GL_ARRAY_BUFFER, vertex);
+
+		//enable the attributes that will be used for the buffer object
+		//location x,y,z and its appropriate jumps
+		glEnableVertexAttribArray(vertexPos3DLocation);
+		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+
+		//enable the attributes to pass in colours to the buffer object
+		//location u,v and its appropriate jumps
+		glEnableVertexAttribArray(vertexUVLocation);
+		glVertexAttribPointer(vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+
+		//draw triangles base off its indicies
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index);
+		glDrawElements(GL_TRIANGLES, indexNumber, GL_UNSIGNED_INT, nullptr);
+
+		//unselect the attribute
+		glDisableVertexArrayAttrib(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glDisableVertexAttribArray(vertexPos3DLocation);
+		glDisableVertexAttribArray(vertexUVLocation);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		//unselect the program from this context
+		glUseProgram(0);
+	}
+
+	void ModelRenderer::DrawInstanced()
+	{
+		
+	}
+
+	void ModelRenderer::Fog(float density)
+	{
+		fogColourID = glGetUniformLocation(programID, "fog_colour");
+		fogDensityID = glGetUniformLocation(programID, "fog_density");
+
+		GLCall(glUniform1f(fogDensityID, density));
+		glm::vec3 fog_colour = glm::vec3(0.5f, 0.5f, 0.5f);
+		GLCall(glUniform3fv(fogColourID, 1, glm::value_ptr(fog_colour)));
 	}
 
 
@@ -65,46 +109,14 @@ namespace GE {
 		glm::mat4 projectionMat = cam->getProjectionMatrix();
 
 		//use program created from init
-		glUseProgram(programID);
+		GLCall(glUseProgram(programID));
 
-		glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat));
-		glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat));
-		glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat));
-		
-
-		//select the vertex buffer into context
-		glBindBuffer(GL_ARRAY_BUFFER, model->getVertices());
-
-		//enable the attributes that will be used for the buffer object
-		glEnableVertexAttribArray(vertexPos3DLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Vpos2D in attribute
-		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
-
-		//enable the attributes to pass in colours to the buffer object
-		glEnableVertexAttribArray(vertexUVLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Colour values in attribute
-		glVertexAttribPointer(vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
-
+		GLCall(glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat)));
+		GLCall(glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat)));
+		GLCall(glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat)));
 		model->BindTexture();
-		//draw triangles base off its verticies
-		glDrawArrays(GL_TRIANGLES, 0, model->getNumOfVertices());
-
-		//unselect the attribute
-		glDisableVertexArrayAttrib(GL_ARRAY_BUFFER, 0);
-
-		glDisableVertexAttribArray(vertexPos3DLocation);
-
-		glDisableVertexAttribArray(vertexUVLocation);
-
-		//unselect the vertext buffer
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//unselect the program from this context
-		glUseProgram(0);
+		Fog(0.0055f);
+		SetupMatricies(model->getVertices(), vertexPos3DLocation, vertexUVLocation,model->getNumOfVertices());
 
 		glDisable(GL_CULL_FACE);
 	}
@@ -118,50 +130,15 @@ namespace GE {
 		glm::mat4 projectionMat = cam->getProjectionMatrix();
 
 		//use program created from init
-		glUseProgram(programID);
+		GLCall(glUseProgram(programID));
 
-		glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat));
-		glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat));
-		glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat));
-
-
-		//select the vertex buffer into context
-		glBindBuffer(GL_ARRAY_BUFFER, terrain->getVertices());
-
-		//enable the attributes that will be used for the buffer object
-		glEnableVertexAttribArray(vertexPos3DLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Vpos2D in attribute
-		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
-
-		//enable the attributes to pass in colours to the buffer object
-		glEnableVertexAttribArray(vertexUVLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Colour values in attribute
-		glVertexAttribPointer(vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
-
-		glActiveTexture(GL_TEXTURE0);
-		terrain->BindTexture(&programID);
+		GLCall(glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat)));
+		GLCall(glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat)));
+		GLCall(glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat)));
 		
-		//draw triangles base off its verticies
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrain->getIndices());
-
-		glDrawElements(GL_TRIANGLES, terrain->getIndexCount(), GL_UNSIGNED_INT, nullptr);
-
-		//unselect the attribute
-		glDisableVertexArrayAttrib(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		glDisableVertexAttribArray(vertexPos3DLocation);
-
-		glDisableVertexAttribArray(vertexUVLocation);
-
-		//unselect the vertext buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//unselect the program from this context
-		glUseProgram(0);
+		terrain->BindTexture(&programID);
+		Fog(0.0055f);
+		DrawWithIndecies(terrain->getVertices(), terrain->getIndices(), terrain->getIndexCount());
 	}
 
 	void ModelRenderer::Draw(Camera* cam, SkyDome* sky)
@@ -174,59 +151,23 @@ namespace GE {
 
 		tranformationMat = glm::translate(tranformationMat, glm::vec3(cam->getPosX(), cam->getPosY(), cam->getPosZ()));
 		//use program created from init
-		glUseProgram(programID);
+		GLCall(glUseProgram(programID));
+		GLCall(glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat)));
+		GLCall(glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat)));
+		GLCall(glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat)));
 
-		glUniformMatrix4fv(transformUniformID, 1, GL_FALSE, value_ptr(tranformationMat));
-		glUniformMatrix4fv(viewUniformID, 1, GL_FALSE, value_ptr(viewMat));
-		glUniformMatrix4fv(projectionUniformID, 1, GL_FALSE, value_ptr(projectionMat));
-
-
-		//select the vertex buffer into context
-		glBindBuffer(GL_ARRAY_BUFFER, sky->getVertices());
-
-		//enable the attributes that will be used for the buffer object
-		glEnableVertexAttribArray(vertexPos3DLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Vpos2D in attribute
-		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
-
-		//enable the attributes to pass in colours to the buffer object
-		glEnableVertexAttribArray(vertexUVLocation);
-
-		//define the structure for OpenGL to select the values from the buffer
-		//storing Colour values in attribute
-		glVertexAttribPointer(vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
-
-		glActiveTexture(GL_TEXTURE0);
 		sky->BindTexture(&programID);
+		Fog(0.0055f);
+		DrawWithIndecies(sky->getVertices(), sky->getIndices(), sky->getIndexCount());
 
-		//draw triangles base off its verticies
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sky->getIndices());
-
-		glDrawElements(GL_TRIANGLES, sky->getIndexCount(), GL_UNSIGNED_INT, nullptr);
-
-		//unselect the attribute
-		glDisableVertexArrayAttrib(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		glDisableVertexAttribArray(vertexPos3DLocation);
-		glDisableVertexAttribArray(vertexUVLocation);
-
-		//unselect the vertext buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		//unselect the program from this context
-		glUseProgram(0);
 		glEnable(GL_DEPTH_TEST);
 	}
 
 	//release the object allocated for the program and vertex buffer object
 	void ModelRenderer::Destroy()
 	{
-
-		glDeleteProgram(programID);
-
-		glDeleteBuffers(1, &vboTriangle);
+		GLCall(glDeleteProgram(programID));
+		GLCall(glDeleteBuffers(1, &vboTriangle));
 	}
 
 }

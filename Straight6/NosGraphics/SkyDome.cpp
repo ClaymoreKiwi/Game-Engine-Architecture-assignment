@@ -5,12 +5,6 @@
 
 GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 {
-	// 1. Define the dome in terms of resolution
-	// and size (radius).  Note, some of these
-	// constants would be better as parameters
-	// to the skydome constructor to configure
-	// skydome at runtime, for example
-
 	// Used to determine extent of dome in terms
 	// of 90 degrees (radians)
 	const float PIDIV2 = M_PI / 2.0f;
@@ -20,31 +14,16 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 	int horizResolution = resolution;
 	int vertResolution = resolution;
 
-	// Radius for sphere
 	int radius = r;
-
-	// Store the generated vertices
 	std::vector<Vertex> vertices;
 
 	// Angle between each horizontal vertex in radians
-	// Angles in radians are expressed in terms of PI
-	// This code makes use of math.h 
 	float azimuthStep = 2.0f * M_PI / horizResolution;
 
-	// Texture extent.  This would be changed depending
-	// on the skydome texture.  For example, some textures
-	// are meant to be wrapped on a sphere, not a dome.
-	// If you use a sphere percentage of 1.0, then the 
-	// bottom part of the texture appears at the based 
-	// of the dome.  In this case, change texturePercentage
-	// to 0.5f so v ranges from 0 to 0.5 and only
-	// top half of texture is shown
+	// Texture extent. range in % that represents the amount of texture shown
 	float texturePercentage = 1.0f;
 
-	// Determines the extent of the dome in terms of a
-	// percentage of PIDIV2.  1.0 means 100% of PIDIV2
-	// or 90 degrees.  2.0 means 200% of PIDIV2 which
-	// results in a sphere
+	//% of sphere shown 2 being a whole sphere and anything below being a portion
 	float spherePercentage = 2.0f;
 
 	// Starting point for vertices.  Vertices start from top
@@ -60,9 +39,6 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 
 	// Starting point for v texture co-ord.  Bottom of texture
 	float v = 0.0f;
-
-	// 2. Determine the vertices horizontally for each elevation
-	// from the top to bottom.
 
 	 for (int vert = 0; vert < vertResolution + 1;vert++)
 	 {
@@ -109,23 +85,25 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 		 }
 	 }
 
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//buffers for drawing
+		GLCall(glGenBuffers(1, &vbo));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-		glGenBuffers(1, &ibo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		GLCall(glGenBuffers(1, &ibo));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 		indexCount = indices.size();
-		texture = new Texture(textPath);
+		texture = std::make_unique<Texture>(textPath);
 	}
 
 	void GE::SkyDome::BindTexture(GLuint* PIDref)
 	{
+		GLCall(glActiveTexture(GL_TEXTURE0));
 		GLuint samplerID = glGetUniformLocation(*PIDref, "sampler");
-		glUniform1i(samplerID, 0);
-		glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+		GLCall(glUniform1i(samplerID, 0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, texture.get()->getTexture()));
 	}

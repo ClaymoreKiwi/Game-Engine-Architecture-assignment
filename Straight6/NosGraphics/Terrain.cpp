@@ -76,34 +76,29 @@ GE::Terrain::Terrain(const char* texturePath, const char* heightMapPath, float H
  		}
 	}
 
-// 9 .Create the vertex buffer.  Same as creating vertex buffer for model
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(Vertex), verticies.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//Create the vertex buffer
+	GLCall(glGenBuffers(1, &vbo));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(Vertex), verticies.data(), GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	//create index buffer
+	GLCall(glGenBuffers(1, &ibo));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-// 10. Create the index buffer.  Same way as creating a vertex buffer except
-// type is GL_ELEMENT_ARRAY_BUFFER and use the indices vector
-
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-// 11. Store the number of indices as need this for rendering
-// the terrain
 	indexCount = (unsigned int)indices.size();
 
-// 12. Tidy up
 	SDL_FreeSurface(heightMap);
-
-	texture = new GE::Texture(texturePath);
+	texture = std::make_unique<GE::Texture>(texturePath);
 }
 
 void GE::Terrain::BindTexture(const GLuint* PIDref)
 {
+	GLCall(glActiveTexture(GL_TEXTURE0));
 	GLuint samplerID = glGetUniformLocation(*PIDref, "sampler");
-	glUniform1i(samplerID, 0);
-	glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+	GLCall(glUniform1i(samplerID, 0));
+	GLCall(glBindTexture(GL_TEXTURE_2D, texture.get()->getTexture()));
 }
 
 

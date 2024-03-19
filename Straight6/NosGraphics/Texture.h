@@ -4,6 +4,8 @@
 #include <SDL_image.h>
 #include <string>
 
+#include "utils.h"
+
 namespace GE 
 {
 	class Texture
@@ -12,6 +14,10 @@ namespace GE
 		Texture(std::string fileName)
 		{
 			loadTexture(fileName);
+		}
+		Texture(GLuint textureName)
+			:textureName(textureName)
+		{
 		}
 
 		~Texture(){}

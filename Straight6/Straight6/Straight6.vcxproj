@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\glm-master;$(SolutionDir)extern\SDL2_image\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\extern\SDL2\lib\x64;..\extern\glew-2\lib\Release\x64;$(SolutionDir)extern\SDL2_image\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\glm-master;$(SolutionDir)extern\SDL2_image\include;..\extern\SDL2_ttf\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\extern\SDL2\lib\x64;..\extern\glew-2\lib\Release\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\SDL2_ttf\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\glm-master;$(SolutionDir)extern\SDL2_image\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\extern\SDL2\lib\x64;..\extern\glew-2\lib\Release\x64;$(SolutionDir)extern\SDL2_image\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\extern\glew-2\include\GL;..\extern\SDL2\include;$(SolutionDir)extern\glm-master;$(SolutionDir)extern\SDL2_image\include;..\extern\SDL2_ttf\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\extern\SDL2\lib\x64;..\extern\glew-2\lib\Release\x64;$(SolutionDir)extern\SDL2_image\lib\x64;..\extern\SDL2_ttf\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

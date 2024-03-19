@@ -7,30 +7,34 @@
 GE::Model::Model(const GLuint* PID, const char* modelPath, const char* texturePath)
 	:PIDref(PID)
 {
-	texture = new Texture(texturePath);
+	texture = std::make_unique<Texture>(texturePath);
 	BindTexture();
 	LoadFromFile(modelPath, texturePath);
 }
 
 void GE::Model::BindTexture()
 {
-	// Activate the texture unit
+	GLCall(glActiveTexture(GL_TEXTURE0));
 	GLuint textID = glGetUniformLocation(*PIDref, "sampler");
-	glUniform1i(textID, 0);
-	glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+	GLCall(glUniform1i(textID, 0));
+	GLCall(glBindTexture(GL_TEXTURE_2D, texture->getTexture()));
 }
 
 bool GE::Model::LoadFromFile(const char* fileName, const char* shaderTex)
 {
 	std::vector<Vertex> loadedVerticies;
+	std::vector<GLuint> indices;
 
 	Assimp::Importer imp;
 
-	const aiScene* pScene = imp.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs);
+	const aiScene* pScene = imp.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | 
+		aiProcess_FlipUVs |
+		aiProcess_GenSmoothNormals |
+		aiProcess_JoinIdenticalVertices);
 
 	if (!pScene)
 	{
-		std::cerr << "Unable to read file\n";
+		std::cerr << "Unable to read file " << fileName << " " << imp.GetErrorString() << std::endl;
 		return false;
 	}
 	//get vertices from the model and put them in a temp vector
@@ -59,13 +63,10 @@ bool GE::Model::LoadFromFile(const char* fileName, const char* shaderTex)
 
 	numVertices = static_cast<int>(loadedVerticies.size());
 
-	glGenBuffers(1, &vbo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), loadedVerticies.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCall(glGenBuffers(1, &vbo));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), loadedVerticies.data(), GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
 	return true;
 }

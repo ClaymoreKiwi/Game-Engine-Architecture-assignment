@@ -2,6 +2,7 @@
 #include <glew.h>
 #include <string>
 
+#include "utils.h"
 namespace GE 
 {
 	/// <summary>
@@ -13,4 +14,5 @@ namespace GE
 	void SetupShaderProgram(std::string& vShaderPath, std::string& fShaderPath, GLuint* programID);
 	GLuint ShaderSetup(GLint type, const std::string& shaderPath);
 	void ProgramSetup(const GLuint& vShader, const GLuint& fShader, GLuint* programID);
+	void SetupMatricies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, const GLuint& vertexCount);
 }

@@ -11,6 +11,7 @@
 #include "Terrain.h"
 #include "Billboard.h"
 #include "BillboardRenderer.h"
+#include "FontRendering.h"
 
 namespace GC
 {
@@ -18,8 +19,12 @@ namespace GC
 	{
 
 	public:
-		GameEngine(){}				//constructor
-		virtual ~GameEngine() {}	//destructor
+		GameEngine()
+			:app_Window(nullptr, SDL_DestroyWindow){}	//constructor
+		virtual ~GameEngine() 
+		{
+			ShutDown();
+		}	//destructor
 
 		bool Init(bool enableVSync);  //initialisation
 		void LoadModels();			  //load all models
@@ -35,24 +40,25 @@ namespace GC
 		bool fullScreen = false;
 		int width = 640, height = 480;
 	private:
-		SDL_Window*		   app_Window = nullptr;    //represent the engine window
 		SDL_GLContext      app_GlContext = NULL;	//represents OpenGL in the engine
-		deltaTime*		   time = nullptr;			//Deta time object for frame counting and timing processes against
+		std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> app_Window;    //represent the engine window
+		std::unique_ptr<deltaTime>		   time = nullptr;			//Deta time object for frame counting and timing processes against
 		
 		glm::vec3 dist = {};
 		
-		GE::Terrain*			terrain = nullptr;
-		GE::ModelRenderer*		terrainMr = nullptr;
+		std::unique_ptr<GE::Terrain>			terrain = nullptr;
+		std::unique_ptr<GE::ModelRenderer>		terrainMr = nullptr;
 
-		GE::FPSCamera*			fpscam = nullptr;		//perspective cam
-		GE::ModelRenderer*		mr = nullptr;			//redering class for the model to be passed into
-		//GE::SkyBox*				skyboxRenderer = nullptr;
+		std::unique_ptr<GE::FPSCamera>			fpscam = nullptr;		//perspective cam
+		std::unique_ptr<GE::ModelRenderer>		mr = nullptr;			//redering class for the model to be passed into
 
-		GE::SkyDome*			skydome = nullptr;
-		GE::ModelRenderer*		skyMr = nullptr;
+		std::unique_ptr<GE::SkyDome>			skydome = nullptr;
+		std::unique_ptr<GE::ModelRenderer>		skyMr = nullptr;
 
-		GE::Billboard* bb = nullptr;
-		GE::BillboardRenderer* bbr = nullptr;
+		std::unique_ptr<GE::Billboard> billboard = nullptr;
+		std::unique_ptr<GE::BillboardRenderer> billboardRenderer = nullptr;
+
+		GE::FontRendering* fontRenderer = nullptr;
 
 		short int FPSCounter = 0;
 		static const int size = 5;
@@ -61,20 +67,21 @@ namespace GC
 		//arrays
 		//////////////////////////////////////////////////////////////////////////
 		//list of models i will be loading in the scene
-		std::vector<GE::Model*> modelsToLoad;
+		std::vector< std::unique_ptr<GE::Model>> modelsToLoad;
+		std::vector< std::unique_ptr<GE::Model>> modelsToInstance;
 		const char* listOfModels[size] =
 		{
+			"../models/tenticle1.obj",
 			"../models/boat.obj",
 			"../models/cannon.obj",
-			"../models/tenticle1.obj",
 			"../models/Trees.obj",
 			"../models/crystal.obj"
 		};
 		const char* listOfTextures[size] =
 		{
-			"../models/boatUV.jpg",
-			"../models/cannonUV.jpg",
 			"../models/Tenticle_colour.jpg",
+			"../models/BoatUV.jpg",
+			"../models/cannonUV.jpg",
 			"../models/treeUV.jpg",
 			"../models/crystal.jpg"
 		};
