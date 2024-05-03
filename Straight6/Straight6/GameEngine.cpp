@@ -86,13 +86,10 @@ namespace GC {
 	{
 		for (int i = 0; i < size; i++)
 		{
-			if (listOfModels[i].modelPath != "../models/Trees.obj")
-			{
-				modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
-				continue;
-			}
-			modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
+			modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
+
 		}
+		modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfInstanceModels[0].modelPath, listOfInstanceModels[0].texturePath, listOfInstanceModels[0].billboardPath, listOfInstanceModels[0].location));
 	}
 
 	bool GameEngine::KeepRunning()

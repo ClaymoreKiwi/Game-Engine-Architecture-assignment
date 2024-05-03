@@ -2,13 +2,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <vector>
+#include <cstring>
 #include "Model.h"
 
 GE::Model::Model(const GLuint* PID, const char* modelPath, const char* texturePath, const char* billboardTexture, glm::vec3& pos_)
 	:PIDref(PID), pos(pos_)
 {
-	if (billboardTexture == "../models/billboards/replace.png")
-	{
+	if (strcmp(billboardTexture, "../models/billboards/replace.png") == 0) {
 		hasValidBillboard = false;
 	}
 	texture = std::make_unique<Texture>(texturePath);

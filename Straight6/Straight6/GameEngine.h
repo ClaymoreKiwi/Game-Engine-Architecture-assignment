@@ -60,7 +60,7 @@ namespace GC
 		std::unique_ptr<GE::Light> light = nullptr;
 
 		short int FPSCounter = 0;
-		static const int size = 7;
+		static const int size = 6;
 
 		///////////////////////////////////////////////////////////////////////////
 		//arrays
@@ -79,11 +79,13 @@ namespace GC
 			{"../models/tenticle1.obj", "../models/Tenticle_colour.jpg", "../models/billboards/Tenticle-BB.png", glm::vec3(275.0f, -3.0f, 300.0f)},
 			{"../models/boat.obj"	  , "../models/BoatUV.jpg"		   , "../models/billboards/Boat-BB.png"	   , glm::vec3(260.0f, 3.0f, 300.0f)},
 			{"../models/cannon.obj"	  , "../models/cannonUV.jpg"	   , "../models/billboards/cannon-BB.png"  , glm::vec3(257.0f, 7.0f, 295.0f)},
-			{"../models/Trees.obj"	  , "../models/treeUV.jpg"		   , "../models/billboards/Tree-BB.png"	   , glm::vec3(230.0f, 2.0f, 300.0f)},
 			{"../models/crystal.obj"  , "../models/crystal.jpg"		   , "../models/billboards/crystal-BB.png" , glm::vec3(232.0f, 4.2f, 301.0f)},
-			{"../models/chest.obj"	  , "../models/chest.png"		   , "../models/billboards/chest-BB.png"   , glm::vec3(230.0f, 4.5f, 300.0f)},
+			{"../models/Chest.obj"	  , "../models/chest.png"		   , "../models/billboards/chest-BB.png"   , glm::vec3(230.0f, 4.5f, 300.0f)},
 			{"../models/volcano.obj"  , "../models/volcano.png"		   , "../models/billboards/replace.png"    , glm::vec3(100.0f, 0.0f, 100.0f)}
-
+		};
+		ModelData listOfInstanceModels[size] =
+		{
+			{"../models/Trees.obj"	  , "../models/treeUV.jpg"		   , "../models/billboards/Tree-BB.png"	   , glm::vec3(230.0f, 2.0f, 300.0f)},
 		};
 		std::vector< std::unique_ptr<GE::Model>> modelsToLoad;
 		std::vector< std::unique_ptr<GE::Model>> modelsToInstance;
