@@ -14,5 +14,7 @@ namespace GE
 	void SetupShaderProgram(std::string& vShaderPath, std::string& fShaderPath, GLuint* programID);
 	GLuint ShaderSetup(GLint type, const std::string& shaderPath);
 	void ProgramSetup(const GLuint& vShader, const GLuint& fShader, GLuint* programID);
-	void SetupMatricies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, const GLuint& vertexCount);
+	void DrawWithVerticies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, const GLuint& vertexCount);
+	void DrawWithVerticies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, GLint& vertexNorm, const GLuint& vertexCount);
+	void setupVertexInfo(const GLuint& vbo, const GLint& vertexLoc, const GLint& vertexUVLoc, const GLint& vertexNorm);
 }

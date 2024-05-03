@@ -45,7 +45,19 @@
     <ClCompile Include="BillboardRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FontRendering.cpp">
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancedRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +89,19 @@
     <ClInclude Include="BillboardRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FontRendering.h">
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancedRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -102,7 +126,22 @@
     <None Include="shaders\Fbillboard.shader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="VshaderText.Shader">
+    <None Include="shaders\instanceF.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\instanceV.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shadowFshader.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shadowVshader.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\instFbillboard.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\instVbillboard.shader">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -11,26 +11,26 @@ namespace GE {
 		{
 			init();
 		};
-
+		BillboardRenderer(bool isInstanced_)
+			:isInstanced(isInstanced_)
+		{
+			init();
+		};
 		~BillboardRenderer() {
 			glDeleteBuffers(1, &vboQuad);
 		}
 
 		void init();
-
-		void draw(Billboard* b);
 		void draw(Billboard*, Camera*);
-		void setPos(float x, float y, float z)
+		void drawAsParticle(Billboard* billboard, Camera* cam, float opacity);
+		void drawAsParticleV2(Billboard* billboard, Camera* cam, const GLuint buffer);
+		void setPos(const glm::vec3& pos_)
 		{
-			posX = x;
-			posY = y;
-			posZ = z;
+			pos = pos_;
 		}
 
 	private:
-		float posX = 0.0f,
-			  posY = 0.0f,
-			  posZ = 0.0f;
+		glm::vec3 pos;
 		// Member fields
 		// This member stores the program object that contains the shaders
 		GLuint programId = 0;
@@ -43,6 +43,10 @@ namespace GE {
 		// and passes to fColour for fragment shader
 		GLint vertexUVLocation = 0;
 
+		//used to adjust the colour and opacity of particles
+		//default colour will be 1 for all non particles
+		GLint AdjustColourID = 0;
+
 		// This member stores the triangle vertex buffer object containing the vertices
 		// transferred from this code to the graphics memory
 		GLuint vboQuad = 0;
@@ -53,8 +57,15 @@ namespace GE {
 		GLuint projectionUniformId = 0;
 		GLuint samplerId = 0;
 
+		//instance
+		GLuint particlePosLoc = 0;
+		GLuint particleFadeLoc = 0;
+
+		//shaders
 		std::string bl_vShader = "";
 		std::string bl_fShader = "";
+
+		bool isInstanced = false;
 	};
 }
 

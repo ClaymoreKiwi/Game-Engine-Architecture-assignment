@@ -2,7 +2,7 @@
 
 // Input to fragment shader
 in vec2 uv;
-
+in vec4 ParticleColour;
 // Texture
 uniform sampler2D sampler;
 
@@ -15,6 +15,8 @@ void main()
 	// Determine fragment colour from texture based on uv co-oords
 	vec4 texColour = texture(sampler, uv);
 
-	fragmentColour = texColour;
+	vec4 finalColour = texColour * ParticleColour.a;
+
+	fragmentColour = vec4(finalColour.rgb, finalColour.a * ParticleColour.a);
 }
 

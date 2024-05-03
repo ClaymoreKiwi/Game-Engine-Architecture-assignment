@@ -164,9 +164,13 @@
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="BillboardRenderer.cpp" />
     <ClCompile Include="CubeRenderer.cpp" />
-    <ClCompile Include="FontRendering.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="InstancedRenderer.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="ShaderUtils.cpp" />
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -177,9 +181,13 @@
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="BillboardRenderer.h" />
     <ClInclude Include="CubeRenderer.h" />
-    <ClInclude Include="FontRendering.h" />
+    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="InstancedRenderer.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ShaderUtils.h" />
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="Terrain.h" />
@@ -198,8 +206,13 @@
     <None Include="shaders\CubeFShader.shader" />
     <None Include="shaders\CubeVShader.shader" />
     <None Include="shaders\Fbillboard.shader" />
+    <None Include="shaders\instanceF.shader" />
+    <None Include="shaders\instanceV.shader" />
+    <None Include="shaders\instFbillboard.shader" />
+    <None Include="shaders\instVbillboard.shader" />
+    <None Include="shaders\shadowFshader.shader" />
+    <None Include="shaders\shadowVshader.shader" />
     <None Include="shaders\Vbillboard.shader" />
-    <None Include="VshaderText.Shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

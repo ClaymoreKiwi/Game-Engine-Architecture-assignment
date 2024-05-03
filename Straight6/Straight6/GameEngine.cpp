@@ -1,6 +1,5 @@
 #include "GameEngine.h"
 #include <iostream>
-
 namespace GC {
 
 	bool GC::GameEngine::Init(bool enableVsync)
@@ -15,11 +14,11 @@ namespace GC {
 
 		//set OpenGL version
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
 		//create window - fixed window size
-		app_Window.reset(SDL_CreateWindow("Straight6", 50, 50, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN));
+		app_Window.reset(SDL_CreateWindow("Straight6", 50, 50, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN));
 		if (app_Window == nullptr)
 		{
 			std::cerr << "unable to create window! Error: " << SDL_GetError() << std::endl;
@@ -55,33 +54,31 @@ namespace GC {
 		}
 		else std::cout << "VSync Disabled\n";
 
-		//variable setup
-		fontRenderer = new GE::FontRendering();
-		fontRenderer->BindTexture("hello world", "../models/fonts/Oswald-Regular.ttf", 24);
 
-		mr = std::make_unique<GE::ModelRenderer>();
-
-		skydome = std::make_unique<GE::SkyDome>("../models/SkyDome/skydomeDark.jpg", 16, 10);
+		skydome = std::make_unique<GE::SkyDome>("../models/SkyDome/skydomeDark.png", 16, 10);
 		skyMr =   std::make_unique<GE::ModelRenderer>();
 
 		terrain =   std::make_unique<GE::Terrain>("../models/terrain/island-texture.png","../models/terrain/island-map.png", 20.0f, 500.0f);
 		terrainMr = std::make_unique<GE::ModelRenderer>();
 
 		//init cam
-		fpscam = std::make_unique<GE::FPSCamera>(glm::vec3(0.0f, 0.0f, 0.0f) + dist,//look at
-									glm::vec3(250.0f, 50.0f, 500.0f),//pos
+		fpscam = std::make_unique<GE::FPSCamera>(glm::vec3(0.0f, 0.0f, 0.0f),//look at
+									glm::vec3(250.0f, 30.0f, 400.0f),//pos
 									glm::vec3(0.0f, 1.0f, 0.0f),//Up direction
 									45.0f, 640.0f / 480.0f, .1f, 1000.0f);
-
-		billboard = std::make_unique<GE::Billboard>("../models/tree.png", 250, 0, 250);
-
-		billboard->setScaleX(10.0f);
-		billboard->setScaleY(10.0f);
-
-		billboardRenderer = std::make_unique<GE::BillboardRenderer>();
-
+		
+		light = std::make_unique<GE::Light>(glm::vec3(250.0f, 0.0f, 300.0f), glm::vec3(300.0f, 250.0f, 0.0f), fpscam.get());
+		glm::vec3 colour = {1,1,1}, ambient = {0.3,0.3,0.3};
+		light->SetLight(colour, ambient);
+		light->MakeShadowMap();
+		
+		mr = std::make_unique<GE::ModelRenderer>();
+		ir = std::make_unique<GE::InstancedRenderer>();
+		ir->createInstances(20);
+		
 		LoadModels();
-		//success - return true
+		emitter = std::make_unique<GE::ParticleEmitter>(20, 10.0f, glm::vec3(100.0f, 90.0f, 100.0f), "../models/billboards/smoke.png");
+
 		return true;
 	}
 
@@ -89,14 +86,13 @@ namespace GC {
 	{
 		for (int i = 0; i < size; i++)
 		{
-			if (listOfModels[i] != "../models/Trees.obj")
+			if (listOfModels[i].modelPath != "../models/Trees.obj")
 			{
-				modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i], listOfTextures[i]));
+				modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
 				continue;
 			}
-			modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i], listOfTextures[i]));
+			modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
 		}
-		mr->setPos(260.0f, 0.0f, 300.0f);
 	}
 
 	bool GameEngine::KeepRunning()
@@ -128,6 +124,7 @@ namespace GC {
 		fpscam->setPitch(fpscam->getPitch() + diffY * mouseSens);
 
 		SDL_WarpMouseInWindow(app_Window.get(), width / 2, height / 2);
+		SDL_ShowCursor(SDL_DISABLE);
 
 		glm::vec3 direction;
 		direction.x = cos(glm::radians(fpscam->getYaw())) * cos(glm::radians(fpscam->getPitch()));
@@ -184,22 +181,42 @@ namespace GC {
 		mr->setRotation(0.0f, -180.0f, 0.0f);
 	}
 
-	void GameEngine::Draw()
+	void GameEngine::ModelDraw()
 	{
-		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skyMr->Draw(fpscam.get(), skydome.get());
-		terrainMr->Draw(fpscam.get(), terrain.get());
 		for (auto& model : modelsToLoad)
 		{
-			mr->Draw(fpscam.get(), model.get());
+			mr->Draw(model.get(), light.get());
 		}
+	}
+
+	void GameEngine::ShadowPass()
+	{
+		glEnable(GL_DEPTH);
+		glViewport(0, 0, light->GetShadowWidth(), light->GetShadowHeight());
+		glBindFramebuffer(GL_FRAMEBUFFER, light->GetFBO());
+		glClear(GL_DEPTH_BUFFER_BIT);
+		ModelDraw();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, width, height);
+	}
+
+	void GameEngine::Draw()
+	{
+		ShadowPass();
+		glClearColor(0.2705f, 0.2745f, 0.2823f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		skyMr->Draw(fpscam.get(), skydome.get(), light.get());
+		terrainMr->Draw(fpscam.get(), terrain.get(), light.get());
+		for (auto& model : modelsToLoad)
+		{
+			mr->Draw(fpscam.get(), model.get(), light.get());
+		}
+		emitter->Update(time->GetDeltaTime(), fpscam.get());
 		for (auto& model : modelsToInstance)
 		{
-			mr->Draw(fpscam.get(), model.get());
+			ir->DrawInstanced(fpscam.get(), model.get(), light.get());
 		}
-		billboardRenderer->draw(billboard.get(), fpscam.get());
-		fontRenderer->RenderText();
+
 		SDL_GL_SwapWindow(app_Window.get());
 	}
 

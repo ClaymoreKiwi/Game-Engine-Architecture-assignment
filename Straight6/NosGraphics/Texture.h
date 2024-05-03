@@ -15,9 +15,9 @@ namespace GE
 		{
 			loadTexture(fileName);
 		}
-		Texture(GLuint textureName)
-			:textureName(textureName)
+		Texture(GLuint texturename)
 		{
+			textureName = texturename;
 		}
 
 		~Texture(){}

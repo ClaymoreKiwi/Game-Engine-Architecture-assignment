@@ -50,7 +50,48 @@ namespace GE {
 			std::cerr << "Failed to link program" << std::endl;
 		}
 	}
-	void SetupMatricies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, const GLuint& vertexCount)
+
+
+	void DrawWithVerticies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, GLint& vertexNorm, const GLuint& vertexCount)
+	{
+		setupVertexInfo(vbo, vertexLoc, vertexUVLoc,vertexNorm);
+
+		//draw triangles base off its verticies
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, vertexCount));
+		//unselect the attribute
+		GLCall(glDisableVertexArrayAttrib(GL_ARRAY_BUFFER, 0));
+		GLCall(glDisableVertexAttribArray(vertexLoc));
+		GLCall(glDisableVertexAttribArray(vertexUVLoc));
+		GLCall(glDisableVertexAttribArray(vertexNorm));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
+		//unselect the program from this context
+		GLCall(glUseProgram(0));
+	}
+
+	void setupVertexInfo(const GLuint& vbo, const GLint& vertexLoc, const GLint& vertexUVLoc, const GLint& vertexNorm)
+	{
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+
+		//enable the attributes that will be used for the buffer object
+		//location x,y,z and its appropriate jumps
+		GLCall(glEnableVertexAttribArray(vertexLoc));
+		GLCall(glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x)));
+
+		//enable the attributes to pass in colours to the buffer object
+		//location u,v and its appropriate jump
+		GLCall(glEnableVertexAttribArray(vertexUVLoc));
+		GLCall(glVertexAttribPointer(vertexUVLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u)));
+
+		//enable the attributes to pass in colours to the buffer object
+		//location normal,x,y,z and its appropriate jump
+		glEnableVertexAttribArray(vertexNorm);
+		glVertexAttribPointer(vertexNorm, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
+
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	}
+
+	void DrawWithVerticies(const GLuint& vbo, GLint& vertexLoc, GLint& vertexUVLoc, const GLuint& vertexCount)
 	{
 		//select the vertex buffer into context
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));

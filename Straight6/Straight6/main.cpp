@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 		ge->Draw();
 	}
 	ge->ShutDown();
+	delete ge;
 	ge = nullptr;
 	return 0;
 }

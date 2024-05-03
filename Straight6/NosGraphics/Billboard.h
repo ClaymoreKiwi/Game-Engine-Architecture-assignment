@@ -10,8 +10,8 @@ namespace GE
 	class Billboard
 	{
 	public:
-		Billboard(const char* texturePath, float PosX, float PosY, float PosZ)
-			:x(PosX), y(PosY), z(PosZ)
+		Billboard(const char* texturePath, glm::vec3 pos_)
+			:pos(pos_)
 		{
 			texture = std::make_unique<Texture>(texturePath);
 			scaleX = scaleY = ScaleZ = 1.0f;
@@ -26,28 +26,28 @@ namespace GE
 
 		float getX()
 		{
-			return x;
+			return pos.x;
 		}
 		float getY()
 		{
-			return y;
+			return pos.y;
 		}
 		float getZ()
 		{
-			return z;
+			return pos.z;
 		}
 
 		void setX(float newX)
 		{
-			x = newX;
+			pos.x = newX;
 		}
 		void setY(float newY)
 		{
-			y = newY;
+			pos.y = newY;
 		}
 		void setZ(float newZ)
 		{
-			z = newZ;
+			pos.z = newZ;
 		}
 
 		void setScaleX(float newX)
@@ -69,13 +69,18 @@ namespace GE
 		glm::vec3 getPos() {
 			return pos;
 		}
+		void setPos(float x_, float y_, float z_)
+		{
+			pos.x = x_;
+			pos.y = y_;
+			pos.z = z_;
+		}
 
 	private:
-		float x = 0, y = 0, z = 0;
 		float scaleX = 0, scaleY = 0, ScaleZ = 0;
 
 		std::unique_ptr<Texture> texture = nullptr;
-		glm::vec3 pos = { x,y,z };
+		glm::vec3 pos = {};
 	};
 }
 

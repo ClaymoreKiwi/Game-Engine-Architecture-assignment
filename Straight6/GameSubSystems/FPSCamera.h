@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera.h"
 #include <iostream>
+
 namespace GE
 {
 	class FPSCamera : public Camera

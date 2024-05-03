@@ -75,13 +75,20 @@ inline std::string LoadShaderFile(const std::string ShaderPath)
 struct Vertex
 {
 	//pos
-	float x, y, z = 0;
+	float x = 0, y = 0, z = 0;
 	//UV Textures
-	float u,v = 0;
+	float u = 0,v = 0;
+	//normals
+	float nx = 0, ny = 0, nz = 0;
 	//Constructors
 	//specific vertex placement
 	Vertex(float m_x, float m_y, float m_z, float m_u, float m_v)
 		:x(m_x), y(m_y), z(m_z), u(m_u), v(m_v)
+	{
+		nx = ny = nz = 0.0f;
+	}
+	Vertex(float m_x, float m_y, float m_z, float m_u, float m_v, float m_nx, float m_ny, float m_nz)
+		:x(m_x), y(m_y), z(m_z), u(m_u), v(m_v), nx(m_nx), ny(m_ny), nz(m_nz)
 	{}
 	//vertex placement origin
 	Vertex()
@@ -90,6 +97,7 @@ struct Vertex
 		y = 0;
 		z = 0;
 		u = v = 0;
+		nx =  ny = nz = 0;
 	}
 };
 

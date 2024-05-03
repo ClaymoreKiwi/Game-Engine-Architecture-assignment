@@ -21,10 +21,10 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 	float azimuthStep = 2.0f * M_PI / horizResolution;
 
 	// Texture extent. range in % that represents the amount of texture shown
-	float texturePercentage = 1.0f;
+	float texturePercentage = 0.5f;
 
 	//% of sphere shown 2 being a whole sphere and anything below being a portion
-	float spherePercentage = 2.0f;
+	float spherePercentage = 1.0f;
 
 	// Starting point for vertices.  Vertices start from top
 	float elevation = PIDIV2;
@@ -57,8 +57,12 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 			 // and angle horizontally
 			 float x = length * sin(angle);
 			 float z = length * cos(angle);
+
+			 // Calculate normals
+			 glm::vec3 normal(x, y, z);
+			 normal = glm::normalize(normal);
 			 // Add new vertex
-			 vertices.push_back(Vertex(x, y, z, u, v * texturePercentage));
+			 vertices.push_back(Vertex(x, y, z, u, v * texturePercentage, -normal.x, -normal.y, -normal.z));
 
 			 angle += azimuthStep;
 			 u += uStep;
@@ -85,20 +89,20 @@ GE::SkyDome::SkyDome(const char* textPath, int resolution, int r)
 		 }
 	 }
 
-		//buffers for drawing
-		GLCall(glGenBuffers(1, &vbo));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	//buffers for drawing
+	GLCall(glGenBuffers(1, &vbo));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-		GLCall(glGenBuffers(1, &ibo));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	GLCall(glGenBuffers(1, &ibo));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-		indexCount = indices.size();
-		texture = std::make_unique<Texture>(textPath);
-	}
+	indexCount = indices.size();
+	texture = std::make_unique<Texture>(textPath);
+}
 
 	void GE::SkyDome::BindTexture(GLuint* PIDref)
 	{
