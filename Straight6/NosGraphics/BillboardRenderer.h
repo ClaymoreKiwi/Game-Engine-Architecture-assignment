@@ -22,7 +22,6 @@ namespace GE {
 
 		void init();
 		void draw(Billboard*, Camera*);
-		void drawAsParticle(Billboard* billboard, Camera* cam, float opacity);
 		void drawAsParticleV2(Billboard* billboard, Camera* cam, const GLuint buffer);
 		void setPos(const glm::vec3& pos_)
 		{

@@ -3,7 +3,6 @@
 #include <math.h>
 #include <list>
 #include "utils.h"
-#include "particle.h"
 #include "BillboardRenderer.h"
 
 namespace GE
@@ -36,7 +35,6 @@ namespace GE
 		const char* particlePath;
 
 		glm::vec3 pos = glm::vec3(0);
-		std::list<Particle*> particles;
 
 		std::vector<ParticleData> particleData;
 		std::vector<glm::vec3> resetParticleData;

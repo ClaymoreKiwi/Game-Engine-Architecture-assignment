@@ -70,8 +70,6 @@ namespace GE {
 			return pos;
 		}
 
-
-
 		// Mutator methods
 		// Set position
 		void setPosX(float newX) {

@@ -77,7 +77,7 @@ namespace GC {
 		ir->createInstances(20);
 		
 		LoadModels();
-		emitter = std::make_unique<GE::ParticleEmitter>(20, 10.0f, glm::vec3(100.0f, 90.0f, 100.0f), "../models/billboards/smoke.png");
+		emitter = std::make_unique<GE::ParticleEmitter>(20, 10.0f,glm::vec3(100.0f, 90.0f, 100.0f), "../models/billboards/smoke.png");
 
 		return true;
 	}
@@ -87,7 +87,6 @@ namespace GC {
 		for (int i = 0; i < size; i++)
 		{
 			modelsToLoad.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfModels[i].modelPath, listOfModels[i].texturePath, listOfModels[i].billboardPath, listOfModels[i].location));
-
 		}
 		modelsToInstance.push_back(std::make_unique<GE::Model>(mr->getPID(), listOfInstanceModels[0].modelPath, listOfInstanceModels[0].texturePath, listOfInstanceModels[0].billboardPath, listOfInstanceModels[0].location));
 	}

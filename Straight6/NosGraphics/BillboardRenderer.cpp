@@ -109,41 +109,6 @@ namespace GE {
 		glDisable(GL_BLEND);
 	}
 
-	void BillboardRenderer::drawAsParticle(Billboard* b, Camera* cam, float opacity)
-	{
-		glEnable(GL_BLEND);
-		//removes backgound colour from alpha channel
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// Calculate the transformation matrix for the object.  Start with the identity matrix
-		// No rotation as going to look down the z axis
-		glm::mat4 transformationMat = glm::mat4(1.0f);
-		// Position in world
-		transformationMat = glm::translate(transformationMat, glm::vec3(b->getX(), b->getY(), b->getZ()));
-		glm::vec3 direction = (cam->getPos() - b->getPos());
-		float angle = atan2(direction.x, direction.z);
-		transformationMat = glm::rotate(transformationMat, angle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-		transformationMat = glm::scale(transformationMat, glm::vec3(b->getScaleX(), b->getScaleY(), 0.0f));
-		// Render object in the same way as a regular model
-		// Get the view and projection matrices
-		glm::mat4 viewMat = cam->getViewMatrix();
-		glm::mat4 projectionMat = cam->getProjectionMatrix();
-		glm::vec4 colour = glm::normalize(glm::vec4(1.0f, 1.0f, 1.0f, opacity));
-		// Select the program into the rendering context
-		GLCall(glUseProgram(programId));
-
-		// Set the uniforms in the shader
-		GLCall(glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, glm::value_ptr(transformationMat)));
-		GLCall(glUniformMatrix4fv(viewUniformId, 1, GL_FALSE, glm::value_ptr(viewMat)));
-		GLCall(glUniformMatrix4fv(projectionUniformId, 1, GL_FALSE, glm::value_ptr(projectionMat)));
-		GLCall(glUniform4fv(AdjustColourID, 1, glm::value_ptr(colour)));
-		b->BindTexture(&programId);
-		DrawWithVerticies(vboQuad, vertexLocation, vertexUVLocation, 6);
-
-		glDisable(GL_BLEND);
-	}
-
 	//THIS IS THE INSTANCING ONE
 	void BillboardRenderer::drawAsParticleV2(Billboard* b, Camera* cam, const GLuint buffer)
 	{

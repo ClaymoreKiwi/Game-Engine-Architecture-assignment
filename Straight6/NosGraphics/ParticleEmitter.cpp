@@ -1,4 +1,5 @@
 #include "ParticleEmitter.h"
+#include <random>
 #include <math.h>
 
 GE::ParticleEmitter::ParticleEmitter(int ParticleRate,float lifeTime, glm::vec3 beginPos_, const char* particle_)

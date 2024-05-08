@@ -169,7 +169,6 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
-    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="ShaderUtils.cpp" />
     <ClCompile Include="SkyDome.cpp" />
@@ -186,7 +185,6 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelRenderer.h" />
-    <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ShaderUtils.h" />
     <ClInclude Include="SkyDome.h" />

@@ -56,3 +56,15 @@ Performance profiling on my home computer<br/>
 There are a few ways to improve this code such as Parallelizing pixel generation
 ![alt text](image-2.png)
 
+Refrences:
+sketchfab.com. (2019). Treasure chest - Download Free 3D model by JSlyin (@popovich.stanislav.01). [online] Available at: https://sketchfab.com/3d-models/treasure-chest-8bdf3dee4f344e36839c4c1c7e1dcd2b.
+
+Rockiloco (2021). Tentacle - Buy Royalty Free 3D model by Rockiloco. [online] sketchfab.com. Available at: https://sketchfab.com/3d-models/tentacle-d286a33b0db44f4383571c02252d3182 [Accessed 8 May 2024].
+
+ShqrKK (2021). Steam Community :: Guide :: All Island Map. [online] steamcommunity.com. Available at: https://steamcommunity.com/sharedfiles/filedetails/?id=2304041443 [Accessed 8 May 2024].
+
+DeVriez, J. (2020). LearnOpenGL - Instancing. [online] learnopengl.com. Available at: https://learnopengl.com/Advanced-OpenGL/Instancing.
+
+de Vries, J. (2015). LearnOpenGL - Shadow Mapping. [online] learnopengl.com. Available at: https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping.
+
+n/a (n.d.). Tutorial 7 : Model loading. [online] www.opengl-tutorial.org. Available at: https://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/.

@@ -83,7 +83,7 @@ namespace GC
 			{"../models/Chest.obj"	  , "../models/chest.png"		   , "../models/billboards/chest-BB.png"   , glm::vec3(230.0f, 4.5f, 300.0f)},
 			{"../models/volcano.obj"  , "../models/volcano.png"		   , "../models/billboards/replace.png"    , glm::vec3(100.0f, 0.0f, 100.0f)}
 		};
-		ModelData listOfInstanceModels[size] =
+		ModelData listOfInstanceModels[1] =
 		{
 			{"../models/Trees.obj"	  , "../models/treeUV.jpg"		   , "../models/billboards/Tree-BB.png"	   , glm::vec3(230.0f, 2.0f, 300.0f)},
 		};
